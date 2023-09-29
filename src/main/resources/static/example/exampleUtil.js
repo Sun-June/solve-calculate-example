@@ -1,7 +1,5 @@
-const numberUrl = '../number/calculation';
-const mixedUrl = '../mixed/calculation';
 
-function numberCalculation(data) {
+function fetchUrl(url, data) {
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -9,18 +7,19 @@ function numberCalculation(data) {
         },
         body: JSON.stringify(data),
     };
-    return fetch(numberUrl, requestOptions);
+    return fetch(url, requestOptions);
+}
+
+function numberCalculation(data) {
+    return fetchUrl('../number/calculation', data);
 }
 
 function mixedCalculation(data) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
-    return fetch(mixedUrl, requestOptions);
+    return fetchUrl('../mixed/calculation', data);
+}
+
+function checkFormula(data) {
+    return fetchUrl('../mixed/check', data);
 }
 
 function renderTable(id, result, height) {
