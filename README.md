@@ -1,0 +1,1 @@
+example project for [solve-calculate](https://github.com/Sun-June/solve-calculate)
