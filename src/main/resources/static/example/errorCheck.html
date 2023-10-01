@@ -3,8 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.6.0/hint.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.17/css/layui.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.17/layui.min.js"></script>
 </head>
 <body>
+<div class="layui-card">
+    <div class="layui-card-header">
+        get error info
+        <span class="layui-badge layui-bg-gray">
+            (You can change the formula with the values above, and the arithmetic yields a new result)
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-form-pane" style="padding: 10px" action="" lay-filter="check1" >
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">formula</label>
+                    <div class="layui-input-inline" style="width: 400px;">
+                        <input type="text" lay-verify="required" name="formula" placeholder="" autocomplete="off" class="layui-input" >
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" id="check1-submit"  lay-filter="check1-submit"  class="layui-btn"  lay-submit lay-on="test-offset" data-offset="rt">check</button>
+                </div>
+                <div class="layui-inline">
+                    result:
+                    <span id="check1-result" >
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <form class="layui-form layui-form-pane" style="padding: 10px" action="" lay-filter="check2" >
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">formula</label>
+                    <div class="layui-input-inline" style="width: 400px;">
+                        <input type="text" lay-verify="required" name="formula" placeholder="" autocomplete="off" class="layui-input" >
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" id="check2-submit"  lay-filter="check2-submit"  lay-submit class="layui-btn" lay-on="test-offset" data-offset="rt">check</button>
+                </div>
+                <div class="layui-inline">
+                    result:
+                    <span id="check2-result" >
+                    </span>
+                </div>
+            </div>
+        </form>
+
+
+        <form class="layui-form" style="padding: 10px" action="" lay-filter="cal1" >
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">number1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" lay-verify="required" name="number1" placeholder="" autocomplete="off" class="layui-input" step="1" lay-affix="number">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">number2</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" lay-verify="required" name="number2" placeholder="" autocomplete="off" class="layui-input" step="1" lay-affix="number">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">number3</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" lay-verify="required" name="number3" placeholder="" autocomplete="off" class="layui-input" step="1" lay-affix="number">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="button" class="layui-btn layui-btn-primary" lay-on="test-offset" onclick="openInfo()" data-offset="rt">TIPS</button>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">formula</label>
+                <div class="layui-input-block">
+                    <textarea id="codeArea" name="formula" placeholder="" class="layui-textarea"  ></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" id="cal1-submit" class="layui-btn" lay-submit lay-filter="cal1-submit">calculation</button>
+
+                    result:
+                    <span id="resultShow">result:</span>
+                </div>
+            </div>
+        </form>
+
+
+        <table class="layui-hide" id="recordShowTable"></table>
+    </div>
+</div>
+
+<script src="exampleUtil.js?v=0.8.3"></script>
+<script>
+    layui.use(['form'], function() {
+        const form = layui.form;
+        const layer = layui.layer;
+
+        // check1
+        form.val('check1', {
+            "formula": "100 * 10 - not_exist + 100"
+        });
+
+        // check2
+        form.val('check2', {
+            "formula": "100 * 10 ++ 100"
+        });
+
+        const onCheckForm = (id) => {
+            form.on(`submit(${id}-submit)`, function(data){
+                const field = data.field; // 获取表单字段值
+                console.log("field::", field)
+                checkFormula(field).then(response => {
+                    console.log("response::", response)
+                    response.json().then(result => {
+                        console.log("json::", result)
+                        if (result.success) {
+                            document.getElementById(`${id}-result`).innerHTML =
+                                `<span class="layui-badge layui-bg-green" id="resultShow">There's nothing wrong with the formula.</span>`
+                        } else {
+                            const before = field.formula.substring(0, result.startIndex);
+                            const error = field.formula.substring(result.startIndex, result.endIndex);
+                            const after = field.formula.substring(result.endIndex, field.formula.length);
+                            document.getElementById(`${id}-result`).innerHTML =
+                                `${before}<span class="hint--bottom hint--always hint--error" style="color: red" aria-label="${result.error}" >${error}</span>${after}`
+                        }
+                    })
+
+                })
+                return false; // 阻止默认 form 跳转
+            });
+        }
+
+        onCheckForm("check1");
+        onCheckForm("check2");
+
+        // cal1
+        form.val('cal1', {
+            "number1": 10.99,
+            "number2": 5.1,
+            "number3": 5.1,
+            "formula": "number1 / (number2 - number3) + 10"
+        });
+
+        form.on('submit(cal1-submit)', function(data){
+            const field = data.field; // 获取表单字段值
+            console.log("field::", field)
+            mixedCalculation(field).then(response => {
+                console.log("response::", response)
+                response.json().then(result => {
+                    console.log("json::", result)
+                    if (result.success) {
+                        document.getElementById("resultShow").innerHTML = `${result.result}`
+                        renderTable("recordShowTable", result, "full-500")
+                    } else {
+                        if (result.errorType === "calculation") {
+
+                            renderTable("recordShowTable", {result: "error", recordList: result.recordList}, "full-500")
+
+                            const before = field.formula.substring(0, result.startIndex);
+                            const error = result.errorStr;
+                            const after = field.formula.substring(result.startIndex + error.length, field.formula.length);
+                            document.getElementById("resultShow").innerHTML =
+                                `${before}<span class="hint--bottom hint--always hint--error" style="color: red" aria-label="${result.error}" >${error}</span>${after}`
+
+                        } else {
+                            renderTable("recordShowTable", {result: "error", recordList: []}, "full-500")
+
+                            const before = field.formula.substring(0, result.startIndex);
+                            const error = field.formula.substring(result.startIndex, result.endIndex);
+                            const after = field.formula.substring(result.endIndex, field.formula.length);
+                            document.getElementById("resultShow").innerHTML =
+                                `${before}<span class="hint--bottom hint--always hint--error" style="color: red" aria-label="${result.error}" >${error}</span>${after}`
+
+                        }
+                    }
+                })
+
+            })
+            return false; // 阻止默认 form 跳转
+        });
+
+        document.getElementById("cal1-submit").click();
+        document.getElementById("check1-submit").click();
+        document.getElementById("check2-submit").click();
+
+    });
+
+    function openInfo() {
+        layui.layer.open({
+            type: 2,
+            area: ['480px', '520px'],
+            content: './info2.html',
+            title: "Calculation Support Notes",
+            fixed: false, // 不固定
+            offset: "rt",
+            maxmin: true,
+            shadeClose: true,
+            btnAlign: 'c', // 按钮居中
+            shade: 0, // 不显示遮罩
+        });
+    }
+
+</script>
+
 
 </body>
 </html>

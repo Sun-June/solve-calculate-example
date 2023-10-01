@@ -44,7 +44,7 @@ public class CalculationApi {
         } catch (CalculationException e) {
             return Map.of("success", false, "errorType", "calculation", "error", e.getErrorInfo().name(),
                     "startIndex", e.context.pendingItem.startIndex, "errorStr", e.context.pendingItem.source,
-                    "itemKind", e.context.pendingItem.kind);
+                    "itemKind", e.context.pendingItem.kind, "recordList", e.context.recordList);
         }
         return Map.of("success", true, "result", both.getLeft(), "recordList", both.getRight().recordList);
     }
@@ -73,7 +73,7 @@ public class CalculationApi {
         } catch (CalculationException e) {
             return Map.of("success", false, "errorType", "calculation", "error", e.getErrorInfo().name(),
                     "startIndex", e.context.pendingItem.startIndex, "errorStr", e.context.pendingItem.source,
-                    "itemKind", e.context.pendingItem.kind);
+                    "itemKind", e.context.pendingItem.kind, "recordList", e.context.recordList);
         }
         return Map.of("success", true, "result", both.getLeft(), "recordList", both.getRight().recordList);
     }

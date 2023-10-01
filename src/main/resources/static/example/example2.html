@@ -54,8 +54,8 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button type="submit" id="demo1" class="layui-btn" lay-submit lay-filter="demo1">calculation</button>
-                    <span class="layui-badge layui-bg-blue" id="resultShow">result:</span>
+                    <button type="submit" id="cal1-submit" class="layui-btn" lay-submit lay-filter="cal1-submit">calculation</button>
+                    <span class="layui-badge layui-bg-blue" style="font-size: 18px"  id="resultShow">result:</span>
                     <span class="layui-badge layui-bg-gray">
                         The following is a record of the computation (keeping the order of computation), ignoring the numeric type
                     </span>
@@ -67,7 +67,7 @@
     </div>
 </div>
 
-<script src="exampleUtil.js"></script>
+<script src="exampleUtil.js?v=0.8.3"></script>
 <script>
     layui.use(['form'], function(){
         const form = layui.form;
@@ -83,7 +83,7 @@
         });
 
         // 提交事件
-        form.on('submit(demo1)', function(data){
+        form.on('submit(cal1-submit)', function(data){
             const field = data.field; // 获取表单字段值
             console.log("field::", field)
             mixedCalculation(field).then(response => {
@@ -108,7 +108,7 @@
             return false; // 阻止默认 form 跳转
         });
 
-        document.getElementById("demo1").click();
+        document.getElementById("cal1-submit").click();
     });
 
     function openInfo() {
