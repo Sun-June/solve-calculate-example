@@ -1,5 +1,14 @@
+let firstRequest = true;
 
 function fetchUrl(url, data) {
+    let msg = "loading...."
+    if (firstRequest) {
+        msg += "(The first request will be slower because of the free cloud service used)"
+    }
+    const loadIndex = layer.msg(msg, {
+        icon: 16,
+        shade: 0.2
+    });
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -7,7 +16,12 @@ function fetchUrl(url, data) {
         },
         body: JSON.stringify(data),
     };
-    return fetch(url, requestOptions);
+    const promiseRes =  fetch(url, requestOptions);
+    promiseRes.finally(() => {
+        layer.close(loadIndex)
+        firstRequest = false;
+    })
+    return promiseRes;
 }
 
 function numberCalculation(data) {
