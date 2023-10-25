@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>info.sunjune.solve</groupId>
 	<artifactId>cal-example</artifactId>
-	<version>0.8.3</version>
+	<version>0.8.4</version>
 	<name>solveCalculation-example</name>
 	<description>Demo project for solve-calculation</description>
 	<properties>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>info.sun-june.solve</groupId>
 			<artifactId>solve-calculate</artifactId>
-			<version>0.8.3</version>
+			<version>0.8.4</version>
 		</dependency>
 		<dependency>
 			<groupId>cn.hutool</groupId>
